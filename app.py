@@ -35,6 +35,7 @@ def main():
   # Processing stages
   print("[i] Processing stages...")
   deploy_stages = deploy_profile["environments"][selected_profile_env]["stages"]
+  deploy_credentials = deploy_profile["environments"][selected_profile_env]["credentials"]
   stages_counter = 0
   for one_stage in deploy_stages:
     if one_stage["ignore"]:
@@ -42,7 +43,7 @@ def main():
       continue
     stages_counter = stages_counter + 1
     print("[i] " + str(stages_counter) +  ". " + str(one_stage["print"]))
-    result = Stages.run_stage(one_stage["name"], one_stage["details"])
+    result = Stages.run_stage(one_stage["name"], one_stage["details"], deploy_credentials)
     if result != True:
       print("[!] Current stage failed!\nResult:\n" + str(result) + "\nContinue? (yes/no)")
       continue_or_not = input()

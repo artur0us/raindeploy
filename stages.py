@@ -3,11 +3,12 @@ import os, json, datetime
 import pysftp, paramiko
 
 from data import Data
+from helpers import Helpers
 
 class Stages:
 
   @staticmethod
-  def run_stage(stage_name, stage_details):
+  def run_stage(stage_name, stage_details, env_credentials):
     # Validation
     if stage_name == None or stage_name.replace(" ", "") == "":
       return "invalid stage name"
@@ -19,28 +20,33 @@ class Stages:
 
     # Searching for needed method
     if stage_name == "ssh_shell_cmd":
-      result = Stages.ssh_shell_cmd(stage_name, stage_details)
+      result = Stages.ssh_shell_cmd(stage_name, stage_details, env_credentials)
     elif stage_name == "local_shell_cmd":
-      result = Stages.local_shell_cmd(stage_name, stage_details)
+      result = Stages.local_shell_cmd(stage_name, stage_details, env_credentials)
     elif stage_name == "build_golang_project":
-      result = Stages.build_golang_project(stage_name, stage_details)
+      result = Stages.build_golang_project(stage_name, stage_details, env_credentials)
     elif stage_name == "sftp_file_upload":
-      result = Stages.sftp_file_upload(stage_name, stage_details)
+      result = Stages.sftp_file_upload(stage_name, stage_details, env_credentials)
     else:
       result = "unknown stage name"
     
     return result
 
   @staticmethod
-  def ssh_shell_cmd(stage_name, stage_details):
+  def ssh_shell_cmd(stage_name, stage_details, env_credentials):
     try:
+      ssh_credentials = Helpers.get_env_credentials(env_credentials, "ssh", stage_details["ssh_config"])
+      if ssh_credentials == False:
+        err_msg = "ssh credentials reading error"
+        Data.fails.append(err_msg)
+        return err_msg
       ssh_client = paramiko.SSHClient()
       ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
       ssh_client.connect(
-        hostname=stage_details["ssh_host"],
-        port=stage_details["ssh_port"],
-        username=stage_details["ssh_username"],
-        password=stage_details["ssh_password"]
+        hostname=ssh_credentials["host"],
+        port=ssh_credentials["port"],
+        username=ssh_credentials["username"],
+        password=ssh_credentials["password"]
       )
       try:
         cmd_stdin, cmd_stdout, cmd_stderr = ssh_client.exec_command(stage_details["cmd"], get_pty=True)
@@ -65,7 +71,7 @@ class Stages:
     return True
 
   @staticmethod
-  def local_shell_cmd(stage_name, stage_details):
+  def local_shell_cmd(stage_name, stage_details, env_credentials):
     try:
       exec_msg = os.popen(stage_details["cmd"]).read()
       Data.logs.append(exec_msg)
@@ -80,7 +86,7 @@ class Stages:
     return True
 
   @staticmethod
-  def build_golang_project(stage_name, stage_details):
+  def build_golang_project(stage_name, stage_details, env_credentials):
     # Old built file removal
     try:
       os.remove(stage_details["paths"]["target_build_file"])
@@ -125,15 +131,20 @@ class Stages:
     return True
 
   @staticmethod
-  def sftp_file_upload(stage_name, stage_details):
+  def sftp_file_upload(stage_name, stage_details, env_credentials):
     try:
+      sftp_credentials = Helpers.get_env_credentials(env_credentials, "sftp", stage_details["sftp_config"])
+      if sftp_credentials == False:
+        err_msg = "sftp credentials reading error"
+        Data.fails.append(err_msg)
+        return err_msg
       sftp_client = {}
       sftp_conn_options = pysftp.CnOpts()
       sftp_conn_options.hostkeys = None
       sftp_client = pysftp.Connection(
-        stage_details["sftp_host"],
-        username=stage_details["sftp_username"],
-        password=stage_details["sftp_password"],
+        sftp_credentials["host"],
+        username=sftp_credentials["username"],
+        password=sftp_credentials["password"],
         cnopts=sftp_conn_options
       )
       try:

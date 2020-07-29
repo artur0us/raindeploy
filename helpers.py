@@ -48,6 +48,9 @@ class Helpers:
           return "*" + env_name + "* stages array is empty"
         if len(deploy_profile["environments"][env_name]["stages"]) < 1:
           return "*" + env_name + "* stages array is empty"
+        
+        # TODO: check environment credentials
+
         stages_counter = 0
         for one_stage in deploy_profile["environments"][env_name]["stages"]:
           stages_counter = stages_counter + 1
@@ -92,3 +95,12 @@ class Helpers:
     else:
       for env_name in deploy_profile["environments"]:
         return env_name
+  
+  @staticmethod
+  def get_env_credentials(credentials, svc_name, svc_user):
+    try:
+      if credentials[svc_name][svc_user] == None:
+        return False
+    except:
+      return False
+    return credentials[svc_name][svc_user]

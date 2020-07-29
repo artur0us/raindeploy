@@ -5,16 +5,44 @@
 
     "dev": {
 
+      "credentials": {
+        "sftp": {
+          "myuser": {
+            "host": "0.0.0.0",
+            "port": "22",
+            "username": "myuser",
+            "password": "SUDOPASSWORD"
+          },
+          "root": {
+            "host": "0.0.0.0",
+            "port": "22",
+            "username": "root",
+            "password": "ROOTPASSWORD"
+          }
+        },
+        "ssh": {
+          "myuser": {
+            "host": "0.0.0.0",
+            "port": "22",
+            "username": "myuser",
+            "password": "SUDOPASSWORD"
+          },
+          "root": {
+            "host": "0.0.0.0",
+            "port": "22",
+            "username": "root",
+            "password": "ROOTPASSWORD"
+          }
+        }
+      },
+
       "stages": [
 
         {
           "name": "ssh_shell_cmd",
           "print": "Stopping core service via SuperVisor...",
           "details": {
-            "ssh_host": "0.0.0.0",
-            "ssh_port": "22",
-            "ssh_username": "myuser",
-            "ssh_password": "SUDOPASSWORD",
+            "ssh_config": "myuser",
             "cmd": "echo \"SUDOPASSWORD\" | sudo -S supervisorctl stop svisor-proc-name"
           },
           "ignore": false
@@ -24,10 +52,7 @@
           "name": "ssh_shell_cmd",
           "print": "Deleting core service old backup file...",
           "details": {
-            "ssh_host": "0.0.0.0",
-            "ssh_port": "22",
-            "ssh_username": "myuser",
-            "ssh_password": "SUDOPASSWORD",
+            "ssh_config": "myuser",
             "cmd": "rm -rf /home/serveruser/services/chat/core/chat-coreOLD"
           },
           "ignore": false
@@ -37,10 +62,7 @@
           "name": "ssh_shell_cmd",
           "print": "Making backup of current core service file...",
           "details": {
-            "ssh_host": "0.0.0.0",
-            "ssh_port": "22",
-            "ssh_username": "myuser",
-            "ssh_password": "SUDOPASSWORD",
+            "ssh_config": "myuser",
             "cmd": "mv /home/serveruser/services/chat/core/chat-core /home/serveruser/services/chat/core/chat-coreOLD"
           },
           "ignore": false
@@ -72,10 +94,7 @@
           "name": "sftp_file_upload",
           "print": "Uploading core service via SFTP...",
           "details": {
-            "sftp_host": "0.0.0.0",
-            "sftp_port": "22",
-            "sftp_username": "myuser",
-            "sftp_password": "SUDOPASSWORD",
+            "sftp_config": "myuser",
             "file_local_path": "/Users/myuser/projects/chat-backend/services/core/build/chat-core",
             "file_dest_path": "/home/serveruser/services/chat/core/chat-core"
           },
@@ -86,10 +105,7 @@
           "name": "ssh_shell_cmd",
           "print": "Making core service file as executable...",
           "details": {
-            "ssh_host": "0.0.0.0",
-            "ssh_port": "22",
-            "ssh_username": "myuser",
-            "ssh_password": "SUDOPASSWORD",
+            "ssh_config": "myuser",
             "cmd": "chmod +x /home/serveruser/services/chat/core/chat-core"
           },
           "ignore": false
@@ -99,10 +115,7 @@
           "name": "ssh_shell_cmd",
           "print": "Starting core service via SuperVisor...",
           "details": {
-            "ssh_host": "0.0.0.0",
-            "ssh_port": "22",
-            "ssh_username": "myuser",
-            "ssh_password": "SUDOPASSWORD",
+            "ssh_config": "myuser",
             "cmd": "echo \"SUDOPASSWORD\" | sudo -S supervisorctl start svisor-proc-name"
           },
           "ignore": false
