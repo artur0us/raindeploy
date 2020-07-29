@@ -73,11 +73,20 @@ class Stages:
   @staticmethod
   def local_shell_cmd(stage_name, stage_details, env_credentials):
     try:
-      exec_msg = os.popen(stage_details["cmd"]).read()
-      Data.logs.append(exec_msg)
+      # exec_msg = os.popen(stage_details["cmd"]).read()
+      # Data.logs.append(exec_msg)
+      # if Data.work_mode == "debug":
+      #   print("=========================================")
+      #   print(exec_msg)
+      #   print("=========================================")
+      proc = subprocess.Popen(stage_details["cmd"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+      proc_out, proc_err = proc.communicate()
+      Data.logs.append(proc_out)
+      Data.logs.append(proc_err)
       if Data.work_mode == "debug":
         print("=========================================")
-        print(exec_msg)
+        print(proc_out)
+        print(proc_err)
         print("=========================================")
     except Exception as err:
       err_msg = "(local_shell_cmd) command execution failed:\n" + str(err)
