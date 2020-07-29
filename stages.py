@@ -1,4 +1,4 @@
-import os, json, datetime
+import os, json, datetime, subprocess
 
 import pysftp, paramiko
 
@@ -104,23 +104,49 @@ class Stages:
         stage_details["paths"]["target_build_file"] +
         " " + stage_details["paths"]["main_src_file"]
       )
+      if Data.work_mode == "debug":
+        print(compile_command)
 
       # Changing working directory to go sources path
       os.chdir(stage_details["paths"]["main_src"])
 
       # Compilation
-      if Data.work_mode == "debug":
-        print(compile_command)
-      exec_msg = os.popen(compile_command).read()
-      Data.logs.append(exec_msg)
+      # exec_msg = os.popen(compile_command).read()
+      # Data.logs.append(exec_msg)
+      # if Data.work_mode == "debug":
+      #   print("=========================================")
+      #   print(exec_msg)
+      #   print("=========================================")
+      proc = subprocess.Popen(compile_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+      proc_out, proc_err = proc.communicate()
+      Data.logs.append(proc_out)
+      Data.logs.append(proc_err)
       if Data.work_mode == "debug":
         print("=========================================")
-        print(exec_msg)
+        print(proc_out)
+        print(proc_err)
         print("=========================================")
+      if ("error" in str(proc_out).lower()) or ("error" in str(proc_err).lower()):
+        err_msg = "(build_golang_project) golang project source code compilation failed:\n" + str(proc_out) + "\n" + str(proc_err)
+        Data.fails.append(err_msg)
+        return err_msg
 
       # chmod +x built_go_executable_file
       if stage_details["build"]["chmod_x_built_file"]:
-        os.popen("chmod +x " + stage_details["paths"]["target_build_file"]).read()
+        # os.popen("chmod +x " + stage_details["paths"]["target_build_file"]).read()
+        proc = None
+        proc_out = None
+        proc_err = None
+        chmod_command = "chmod +x " + stage_details["paths"]["target_build_file"]
+        proc = subprocess.Popen(chmod_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        proc_out, proc_err = proc.communicate()
+        Data.logs.append(proc_out)
+        Data.logs.append(proc_err)
+        if Data.work_mode == "debug":
+          print("=========================================")
+          print(proc_out)
+          print(proc_err)
+          print("=========================================")
       
       # Restore default working directory
       os.chdir(Data.default_cwd)
