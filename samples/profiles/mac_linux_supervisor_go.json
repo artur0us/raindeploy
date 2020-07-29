@@ -1,0 +1,116 @@
+{
+  "signature": "raindeploy",
+
+  "environments": {
+
+    "dev": {
+
+      "stages": [
+
+        {
+          "name": "ssh_shell_cmd",
+          "print": "Stopping core service via SuperVisor...",
+          "details": {
+            "ssh_host": "0.0.0.0",
+            "ssh_port": "22",
+            "ssh_username": "myuser",
+            "ssh_password": "SUDOPASSWORD",
+            "cmd": "echo \"SUDOPASSWORD\" | sudo -S supervisorctl stop svisor-proc-name"
+          },
+          "ignore": false
+        },
+
+        {
+          "name": "ssh_shell_cmd",
+          "print": "Deleting core service old backup file...",
+          "details": {
+            "ssh_host": "0.0.0.0",
+            "ssh_port": "22",
+            "ssh_username": "myuser",
+            "ssh_password": "SUDOPASSWORD",
+            "cmd": "rm -rf /home/serveruser/services/chat/core/chat-coreOLD"
+          },
+          "ignore": false
+        },
+
+        {
+          "name": "ssh_shell_cmd",
+          "print": "Making backup of current core service file...",
+          "details": {
+            "ssh_host": "0.0.0.0",
+            "ssh_port": "22",
+            "ssh_username": "myuser",
+            "ssh_password": "SUDOPASSWORD",
+            "cmd": "mv /home/serveruser/services/chat/core/chat-core /home/serveruser/services/chat/core/chat-coreOLD"
+          },
+          "ignore": false
+        },
+
+        {
+          "name": "build_golang_project",
+          "print": "Building core service via golang compiler...",
+          "details": {
+            "paths": {
+              "project_root": "/Users/myuser/projects/chat-backend/services/core",
+              "builds": "/Users/myuser/projects/chat-backend/services/core/build",
+              "target_build_file": "/Users/myuser/projects/chat-backend/services/core/build/chat-core",
+              "main_src_file": "/Users/myuser/projects/chat-backend/services/core/cmd/main/main.go"
+            },
+            "build": {
+              "variables": [
+                "GOOS=linux", 
+                "GOARCH=amd64",
+                "CGO_ENABLED=0"
+              ],
+              "chmod_x_built_file": false
+            }
+          },
+          "ignore": false
+        },
+
+        {
+          "name": "sftp_file_upload",
+          "print": "Uploading core service via SFTP...",
+          "details": {
+            "sftp_host": "0.0.0.0",
+            "sftp_port": "22",
+            "sftp_username": "myuser",
+            "sftp_password": "SUDOPASSWORD",
+            "file_local_path": "/Users/myuser/projects/chat-backend/services/core/build/chat-core",
+            "file_dest_path": "/home/serveruser/services/chat/core/chat-core"
+          },
+          "ignore": false
+        },
+
+        {
+          "name": "ssh_shell_cmd",
+          "print": "Making core service file as executable...",
+          "details": {
+            "ssh_host": "0.0.0.0",
+            "ssh_port": "22",
+            "ssh_username": "myuser",
+            "ssh_password": "SUDOPASSWORD",
+            "cmd": "chmod +x /home/serveruser/services/chat/core/chat-core"
+          },
+          "ignore": false
+        },
+
+        {
+          "name": "ssh_shell_cmd",
+          "print": "Starting core service via SuperVisor...",
+          "details": {
+            "ssh_host": "0.0.0.0",
+            "ssh_port": "22",
+            "ssh_username": "myuser",
+            "ssh_password": "SUDOPASSWORD",
+            "cmd": "echo \"SUDOPASSWORD\" | sudo -S supervisorctl start svisor-proc-name"
+          },
+          "ignore": false
+        }
+
+      ]
+      
+    }
+
+  }
+}
