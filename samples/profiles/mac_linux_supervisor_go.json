@@ -1,6 +1,8 @@
 {
   "signature": "raindeploy",
 
+  "project_name": "Chat [core]",
+
   "environments": {
 
     "dev": {
@@ -32,6 +34,13 @@
             "port": "22",
             "username": "root",
             "password": "ROOTPASSWORD"
+          }
+        },
+        "slack_bot": {
+          "main": {
+            "project_channel": "proj-chat",
+            "bot_token": "xxxxxxxxxx",
+            "icon_emoji": ":heavy_check_mark:"
           }
         }
       },

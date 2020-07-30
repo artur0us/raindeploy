@@ -44,6 +44,8 @@ class Helpers:
         return "profile is empty"
       if deploy_profile["signature"] != "raindeploy":
         return "wrong signature"
+      if deploy_profile["project_name"] == None or type(deploy_profile["project_name"]) != str:
+        return "invalid project name"
       if deploy_profile["environments"] == None:
         return "environments are empty"
       if deploy_profile["environments"] == None:
@@ -108,10 +110,10 @@ class Helpers:
         return env_name
   
   @staticmethod
-  def get_env_credentials(credentials, svc_name, svc_user):
+  def get_env_credentials(credentials, svc_name, svc_profile):
     try:
-      if credentials[svc_name][svc_user] == None:
+      if credentials[svc_name][svc_profile] == None:
         return False
     except:
       return False
-    return credentials[svc_name][svc_user]
+    return credentials[svc_name][svc_profile]

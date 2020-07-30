@@ -6,6 +6,7 @@ from stages import Stages
 from data import Data
 from helpers import Helpers
 from profiles_history import ProfilesHistory
+from notifications import Notifications
 
 def main():
   os.system("clear")
@@ -53,7 +54,11 @@ def main():
   if profile_validation_res != True:
     exit("[X] Profile validation error: " + str(profile_validation_res))
   
+  # Project name
+  project_name = deploy_profile["project_name"]
+  
   # Parsing profile environments
+  print("=" * 40)
   print("[i] Found environments: " + str(Helpers.get_all_profile_envs(deploy_profile)))
   selected_profile_env = Helpers.select_profile_env(deploy_profile)
   if selected_profile_env == False:
@@ -83,5 +88,30 @@ def main():
 
   end_time = datetime.datetime.now()
   print("[i] All done in " + str(int((end_time-start_time).total_seconds())) + " seconds!")
+  print("=" * 40)
+
+  # Slack notification
+  print("Send notification slack? yes/no")
+  send_notice_or_not = input()
+  if send_notice_or_not.lower().replace(" ", "") == "yes":
+    is_slack_bot_creds_valid = Notifications.validate_slack_bot_credentials(deploy_credentials)
+    if is_slack_bot_creds_valid:
+      print("Enter the message to send:")
+      slack_msg_to_send = input()
+      if slack_msg_to_send.lower().replace(" ", "") != "":
+        slack_msg_to_send = (
+          "Backend update!" + "\n" +
+          "Environment: " + selected_profile_env + "\n" +
+          "Service: " + project_name + "\n" +
+          "Message: " + slack_msg_to_send
+        )
+        Notifications.send_msg_to_slack(
+          deploy_credentials["slack_bot"]["main"]["bot_token"],
+          deploy_credentials["slack_bot"]["main"]["project_channel"],
+          slack_msg_to_send,
+          deploy_credentials["slack_bot"]["main"]["icon_emoji"]
+        )
+    else:
+      print("[!] Invalid Slack credentials!")
 
 main()
