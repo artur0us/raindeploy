@@ -1,5 +1,7 @@
 import slack
-# from slack.errors import SlackApiError
+from slack.errors import SlackApiError
+
+from data import Data
 
 class Notifications:
 
@@ -12,13 +14,15 @@ class Notifications:
         text = text,
         icon_emoji = icon_emoji
       )
-      # print(str(response))
-    except Exception as err:
-      # print(str(err))
-      return False
-    # except SlackApiError as err:
-    #   print(str(err.response['ok']))
-    #   print(str(err.response['error']))
+      Data.logs.append(str(response))
+      if Data.WORK_MODE == "debug":
+        print(str(response))
+    except SlackApiError as err:
+      Data.fails.append(str(err.response['ok']))
+      Data.fails.append(str(err.response['error']))
+      if Data.WORK_MODE == "debug":
+        print(str(err.response['ok']))
+        print(str(err.response['error']))
     return True
   
   @staticmethod
