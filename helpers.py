@@ -1,15 +1,25 @@
-import os, json, datetime
+import os, json
+
+from data import Data
 
 class Helpers:
 
   @staticmethod
-  def get_profile_file():
-    print("[>] Enter deploy profile file path: ")
-    deploy_profile_path = input() # sample_profile.json
-    if not os.path.isfile(deploy_profile_path):
-      # exit("[X] Deploy profile file not found!")
-      return False
+  def get_profile_file(hist_profile_path = None):
     deploy_profile_file = None
+    deploy_profile_path = None
+    if hist_profile_path == None or type(hist_profile_path) != str:
+      print("[>] Enter deploy profile file path: ")
+      deploy_profile_path = input() # sample_profile.json
+      if not os.path.isfile(deploy_profile_path):
+        # exit("[X] Deploy profile file not found!")
+        return False
+    else:
+      deploy_profile_path = hist_profile_path
+    
+    if deploy_profile_path == None or type(deploy_profile_path) != str:
+      return False
+
     try:
       deploy_profile_file = open(deploy_profile_path, "r")
     except:
@@ -24,6 +34,7 @@ class Helpers:
       deploy_profile_file.close()
       return False
     deploy_profile_file.close()
+    Data.curr_profile_path = deploy_profile_path
     return deploy_profile
 
   @staticmethod

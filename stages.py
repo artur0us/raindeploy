@@ -55,7 +55,7 @@ class Stages:
         #   pass # TODO: return error message or not?
         data = cmd_stdout.read() + cmd_stderr.read()
         Data.logs.append(data)
-        if Data.work_mode == "debug":
+        if Data.WORK_MODE == "debug":
           print("=========================================")
           print(data)
           print("=========================================")
@@ -75,7 +75,7 @@ class Stages:
     try:
       # exec_msg = os.popen(stage_details["cmd"]).read()
       # Data.logs.append(exec_msg)
-      # if Data.work_mode == "debug":
+      # if Data.WORK_MODE == "debug":
       #   print("=========================================")
       #   print(exec_msg)
       #   print("=========================================")
@@ -83,7 +83,7 @@ class Stages:
       proc_out, proc_err = proc.communicate()
       Data.logs.append(proc_out)
       Data.logs.append(proc_err)
-      if Data.work_mode == "debug":
+      if Data.WORK_MODE == "debug":
         print("=========================================")
         print(proc_out)
         print(proc_err)
@@ -113,7 +113,7 @@ class Stages:
         stage_details["paths"]["target_build_file"] +
         " " + stage_details["paths"]["main_src_file"]
       )
-      if Data.work_mode == "debug":
+      if Data.WORK_MODE == "debug":
         print(compile_command)
 
       # Changing working directory to go sources path
@@ -122,7 +122,7 @@ class Stages:
       # Compilation
       # exec_msg = os.popen(compile_command).read()
       # Data.logs.append(exec_msg)
-      # if Data.work_mode == "debug":
+      # if Data.WORK_MODE == "debug":
       #   print("=========================================")
       #   print(exec_msg)
       #   print("=========================================")
@@ -130,7 +130,7 @@ class Stages:
       proc_out, proc_err = proc.communicate()
       Data.logs.append(proc_out)
       Data.logs.append(proc_err)
-      if Data.work_mode == "debug":
+      if Data.WORK_MODE == "debug":
         print("=========================================")
         print(proc_out)
         print(proc_err)
@@ -151,7 +151,7 @@ class Stages:
         proc_out, proc_err = proc.communicate()
         Data.logs.append(proc_out)
         Data.logs.append(proc_err)
-        if Data.work_mode == "debug":
+        if Data.WORK_MODE == "debug":
           print("=========================================")
           print(proc_out)
           print(proc_err)

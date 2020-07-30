@@ -5,6 +5,7 @@ import pysftp, paramiko
 from stages import Stages
 from data import Data
 from helpers import Helpers
+from profiles_history import ProfilesHistory
 
 def main():
   os.system("clear")
@@ -12,11 +13,38 @@ def main():
   Data.default_cwd = os.getcwd()
   Data.logs = []
   Data.fails = []
+  Data.PROFILES_HISTORY_DIR_PATH = (
+    os.path.expanduser("~") + "/" +
+    Data.PROFILES_HISTORY_DIR_PATH
+  )
 
-  # Reading deploy profile
-  deploy_profile = Helpers.get_profile_file()
-  if deploy_profile == False:
-    exit("[X] Invalid deploy profile or file not found!")
+  # Getting deploy profiles from history
+  deploy_profile = None
+  is_hist_profile_selected = False
+  if Data.USE_PROFILES_HISTORY_SEARCH:
+    profiles_history = ProfilesHistory.get_profiles_paths_from_history()
+    if len(profiles_history) > 0:
+      print("[i] Found profiles in history:")
+      print("0. Enter deploy profile path manually")
+      profiles_history_counter = 0
+      for one_hist_profile_path in profiles_history:
+        profiles_history_counter = profiles_history_counter + 1
+        print(str(profiles_history_counter) + ". " + one_hist_profile_path)
+      print("Select variant:")
+      selected_hist_profile_idx = input()
+      try:
+        selected_hist_profile_idx = int(selected_hist_profile_idx)
+        if selected_hist_profile_idx > 0:
+          is_hist_profile_selected = True
+          deploy_profile = Helpers.get_profile_file(profiles_history[selected_hist_profile_idx-1])
+      except:
+        exit("[X] Invalid input!")
+  if not is_hist_profile_selected:
+    # Reading deploy profile manually
+    deploy_profile = Helpers.get_profile_file(None)
+    if deploy_profile == None or deploy_profile == False:
+      exit("[X] Invalid deploy profile or file not found!")
+
 
   start_time = datetime.datetime.now()
 
@@ -50,6 +78,9 @@ def main():
       if continue_or_not.replace(" ", "") != "yes":
         exit("[X] Exited with error!")
   
+  # Saving current profile path to local history
+  ProfilesHistory.save_profile_path_to_history(Data.curr_profile_path)
+
   end_time = datetime.datetime.now()
   print("[i] All done in " + str(int((end_time-start_time).total_seconds())) + " seconds!")
 
