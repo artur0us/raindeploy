@@ -56,9 +56,10 @@ def main():
   
   # Project name
   project_name = deploy_profile["project_name"]
+  print("=" * 40)
+  print("[i] Selected project name: " + str(project_name))
   
   # Parsing profile environments
-  print("=" * 40)
   print("[i] Found environments: " + str(Helpers.get_all_profile_envs(deploy_profile)))
   selected_profile_env = Helpers.select_profile_env(deploy_profile)
   if selected_profile_env == False:
