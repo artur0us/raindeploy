@@ -27,6 +27,8 @@ class Stages:
       result = Stages.build_golang_project(stage_name, stage_details, env_credentials)
     elif stage_name == "sftp_file_upload":
       result = Stages.sftp_file_upload(stage_name, stage_details, env_credentials)
+    elif stage_name == "sftp_dir_upload":
+      result = Stages.sftp_dir_upload(stage_name, stage_details, env_credentials)
     else:
       result = "unknown stage name"
     
@@ -191,6 +193,36 @@ class Stages:
         return err_msg
     except Exception as err:
       err_msg = "(sftp_file_upload) SFTP connection failed:\n" + str(err)
+      Data.fails.append(err_msg)
+      return err_msg
+    return True
+
+  @staticmethod
+  def sftp_dir_upload(stage_name, stage_details, env_credentials):
+    try:
+      sftp_credentials = Helpers.get_env_credentials(env_credentials, "sftp", stage_details["sftp_config"])
+      if sftp_credentials == False:
+        err_msg = "sftp credentials reading error"
+        Data.fails.append(err_msg)
+        return err_msg
+      sftp_client = {}
+      sftp_conn_options = pysftp.CnOpts()
+      sftp_conn_options.hostkeys = None
+      sftp_client = pysftp.Connection(
+        sftp_credentials["host"],
+        username=sftp_credentials["username"],
+        password=sftp_credentials["password"],
+        cnopts=sftp_conn_options
+      )
+      try:
+        sftp_client.put_r(stage_details["dir_local_path"], stage_details["dir_dest_path"], preserve_mtime=True)
+        sftp_client.close()
+      except Exception as err:
+        err_msg = "(sftp_dir_upload) upload failed:\n" + str(err)
+        Data.fails.append(err_msg)
+        return err_msg
+    except Exception as err:
+      err_msg = "(sftp_dir_upload) SFTP connection failed:\n" + str(err)
       Data.fails.append(err_msg)
       return err_msg
     return True
