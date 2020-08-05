@@ -42,9 +42,9 @@ class Helpers:
             if not deploy_profile.get("environments"):
                 return "environments are empty"
             for env_name in deploy_profile["environments"]:
-                if deploy_profile["environments"][env_name]:
+                if not deploy_profile["environments"][env_name]:
                     return "*" + env_name + "* environment is empty"
-                if deploy_profile["environments"][env_name].get("stages"):
+                if not deploy_profile["environments"][env_name].get("stages"):
                     return "*" + env_name + "* stages array is empty"
 
                 # TODO: check environment credentials
@@ -52,9 +52,9 @@ class Helpers:
                 stages_counter = 0
                 for one_stage in deploy_profile["environments"][env_name]["stages"]:
                     stages_counter = stages_counter + 1
-                    if one_stage.get("name"):
+                    if not one_stage.get("name"):
                         return "*" + env_name + "* stage #" + str(stages_counter) + " (unknown) is null"
-                    if one_stage["print"]:
+                    if not one_stage["print"]:
                         return "*" + env_name + "* stage #" + str(stages_counter) + " (" + str(
                             one_stage["name"]) + ") printing msg is null"
                     if one_stage["details"] is None:

@@ -84,12 +84,6 @@ class Stages:
     @staticmethod
     def local_shell_cmd(stage_name: str, stage_details: dict, env_credentials: dict) -> Union[str, bool]:
         try:
-            # exec_msg = os.popen(stage_details["cmd"]).read()
-            # Data.logs.append(exec_msg)
-            # if Data.WORK_MODE == "debug":
-            #   print("=========================================")
-            #   print(exec_msg)
-            #   print("=========================================")
             proc = subprocess.Popen(stage_details["cmd"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             proc_out, proc_err = proc.communicate()
             Data.logs.append(proc_out)
@@ -130,12 +124,6 @@ class Stages:
             os.chdir(stage_details["paths"]["main_src"])
 
             # Compilation
-            # exec_msg = os.popen(compile_command).read()
-            # Data.logs.append(exec_msg)
-            # if Data.WORK_MODE == "debug":
-            #   print("=========================================")
-            #   print(exec_msg)
-            #   print("=========================================")
             proc = subprocess.Popen(compile_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             proc_out, proc_err = proc.communicate()
             Data.logs.append(proc_out)
@@ -150,7 +138,6 @@ class Stages:
 
             # chmod +x built_go_executable_file
             if stage_details["build"]["chmod_x_built_file"]:
-                # os.popen("chmod +x " + stage_details["paths"]["target_build_file"]).read()
                 proc = None
                 proc_out = None
                 proc_err = None
