@@ -37,7 +37,7 @@ class Notifications:
             return False
         if not credentials.get("slack_bot"):
             return False
-        if credentials["slack_bot"].get("main"):
+        if not credentials["slack_bot"].get("main"):
             return False
         if not credentials["slack_bot"]["main"].get("project_channel") or \
                 type(credentials["slack_bot"]["main"]["project_channel"]) != str:

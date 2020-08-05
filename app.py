@@ -33,12 +33,13 @@ def main():
             for one_hist_profile_path in profiles_history:
                 profiles_history_counter = profiles_history_counter + 1
                 print(str(profiles_history_counter) + ". " + one_hist_profile_path)
-            selected_hist_profile_idx = input('Select variant:')
+            selected_hist_profile_idx = input('Select variant: ')
             if selected_hist_profile_idx.isdigit():
                 selected_hist_profile_idx = int(selected_hist_profile_idx)
-                if selected_hist_profile_idx > 0:
-                    is_hist_profile_selected = True
-                    deploy_profile = Helpers.get_profile_file(profiles_history[selected_hist_profile_idx - 1])
+                if len(profiles_history) >= selected_hist_profile_idx:
+                    if selected_hist_profile_idx > 0:
+                        is_hist_profile_selected = True
+                        deploy_profile = Helpers.get_profile_file(profiles_history[selected_hist_profile_idx - 1])
             else:
                 exit("[X] Invalid input!")
     if not is_hist_profile_selected:
