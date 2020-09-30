@@ -130,7 +130,7 @@ class Stages:
             Data.logs.append(proc_err)
             if Data.WORK_MODE == DEBUG_MODE:
                 print_logs(proc_out, proc_err)
-            if ("error" in str(proc_out).lower()) or ("error" in str(proc_err).lower()):
+            if ("error" in str(proc_out).lower()) or ("error" in str(proc_err).lower()) or ("undefined:" in str(proc_out).lower()) or ("undefined:" in str(proc_err).lower()):
                 err_msg = "(build_golang_project) golang project source code compilation failed:\n" + str(
                     proc_out) + "\n" + str(proc_err)
                 Data.fails.append(err_msg)
