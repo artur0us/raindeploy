@@ -103,6 +103,9 @@ def main():
             if slack_msg_to_send.lower().replace(" ", "") != "":
                 slack_msg_to_send = (
                         "Backend update!" + "\n" +
+                        "Start time: " + str(start_time) + "\n" +
+                        "End time: " + str(end_time) + "\n" +
+                        "Elapsed time: " + str(int((end_time - start_time).total_seconds())) + " seconds\n" +
                         "Environment: " + selected_profile_env + "\n" +
                         "Service: " + project_name + "\n" +
                         "Message: " + slack_msg_to_send
