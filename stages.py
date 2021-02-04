@@ -143,6 +143,9 @@ class Stages:
                 or ("not enough arguments" in str(proc_out).lower())
                 or ("not enough arguments" in str(proc_err).lower())
 
+                or ("is not in goroot" in str(proc_out).lower())
+                or ("is not in goroot" in str(proc_err).lower())
+
                 or ("want" in str(proc_out).lower())
                 or ("want" in str(proc_err).lower())
                 ):
