@@ -152,6 +152,9 @@ class Stages:
                 or ("does not support indexing" in str(proc_out).lower())
                 or ("does not support indexing" in str(proc_err).lower())
 
+                or ("invalid operation" in str(proc_out).lower())
+                or ("invalid operation" in str(proc_err).lower())
+
                 or ("want" in str(proc_out).lower())
                 or ("want" in str(proc_err).lower())
                 ):
