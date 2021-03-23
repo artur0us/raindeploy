@@ -155,6 +155,9 @@ class Stages:
                 or ("invalid operation" in str(proc_out).lower())
                 or ("invalid operation" in str(proc_err).lower())
 
+                or ("query redeclared in" in str(proc_out).lower())
+                or ("query redeclared in" in str(proc_err).lower())
+
                 or ("want" in str(proc_out).lower())
                 or ("want" in str(proc_err).lower())
                 ):
