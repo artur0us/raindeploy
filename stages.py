@@ -160,6 +160,9 @@ class Stages:
 
                 or ("want" in str(proc_out).lower())
                 or ("want" in str(proc_err).lower())
+
+                or ("has no field or" in str(proc_out).lower())
+                or ("has no field or" in str(proc_err).lower())
                 ):
                 err_msg = "(build_golang_project) golang project source code compilation failed:\n" + str(
                     proc_out) + "\n" + str(proc_err)
