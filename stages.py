@@ -166,6 +166,9 @@ class Stages:
 
                 or ("declared but not used" in str(proc_out).lower())
                 or ("declared but not used" in str(proc_err).lower())
+
+                or ("entry for module providing" in str(proc_out).lower())
+                or ("entry for module providing" in str(proc_err).lower())
                 ):
                 err_msg = "(build_golang_project) golang project source code compilation failed:\n" + str(
                     proc_out) + "\n" + str(proc_err)
