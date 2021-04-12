@@ -172,6 +172,9 @@ class Stages:
 
                 or ("missing go.sum entry" in str(proc_out).lower())
                 or ("missing go.sum entry" in str(proc_err).lower())
+
+                or ("assignment mismatch:" in str(proc_out).lower())
+                or ("assignment mismatch:" in str(proc_err).lower())
                 ):
                 err_msg = "(build_golang_project) golang project source code compilation failed:\n" + str(
                     proc_out) + "\n" + str(proc_err)
